@@ -27,8 +27,7 @@ resource "aws_key_pair" "generated_key" {
 resource "aws_instance" "schema_registry" {
 
   depends_on = ["aws_subnet.private_subnet_1",
-                "aws_subnet.private_subnet_2",
-                "aws_subnet.private_subnet_3"]
+                "aws_subnet.private_subnet_2"]
 
   count = "${var.instance_count["schema_registry"]}"
   ami = "ami-0922553b7b0369273"

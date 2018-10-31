@@ -109,13 +109,6 @@ resource "aws_route_table_association" "private_subnet_2_association" {
 
 }
 
-resource "aws_route_table_association" "private_subnet_3_association" {
-
-    subnet_id = "${aws_subnet.private_subnet_3.id}"
-    route_table_id = "${aws_route_table.private_route_table.id}"
-
-}
-
 ###########################################
 ################# Subnets #################
 ###########################################
@@ -163,25 +156,10 @@ resource "aws_subnet" "private_subnet_2" {
 
 }
 
-resource "aws_subnet" "private_subnet_3" {
-
-  vpc_id = "${aws_vpc.default.id}"
-  cidr_block = "10.0.3.0/24"
-  map_public_ip_on_launch = false
-  availability_zone = "${element(var.aws_availability_zones, 2)}"
-
-    tags {
-
-        Name = "private-subnet"
-
-    }    
-
-}
-
 resource "aws_subnet" "public_subnet_1" {
 
   vpc_id                  = "${aws_vpc.default.id}"
-  cidr_block              = "10.0.4.0/24"
+  cidr_block              = "10.0.3.0/24"
   map_public_ip_on_launch = true
   availability_zone = "${element(var.aws_availability_zones, 0)}"
 
@@ -196,7 +174,7 @@ resource "aws_subnet" "public_subnet_1" {
 resource "aws_subnet" "public_subnet_2" {
 
   vpc_id                  = "${aws_vpc.default.id}"
-  cidr_block              = "10.0.5.0/24"
+  cidr_block              = "10.0.4.0/24"
   map_public_ip_on_launch = true
   availability_zone = "${element(var.aws_availability_zones, 1)}"
 
@@ -249,7 +227,7 @@ resource "aws_security_group" "schema_registry" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["10.0.4.0/24", "10.0.5.0/24"]
+    cidr_blocks = ["10.0.5.0/24"]
 
   }
 
@@ -258,7 +236,7 @@ resource "aws_security_group" "schema_registry" {
     from_port   = 8081
     to_port     = 8081
     protocol    = "tcp"
-    cidr_blocks = ["10.0.4.0/24", "10.0.5.0/24"]
+    cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24"]
 
   }
 
@@ -284,7 +262,7 @@ resource "aws_security_group" "rest_proxy" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["10.0.4.0/24", "10.0.5.0/24"]
+    cidr_blocks = ["10.0.5.0/24"]
 
   }
 
@@ -293,7 +271,7 @@ resource "aws_security_group" "rest_proxy" {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["10.0.4.0/24", "10.0.5.0/24"]
+    cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24"]
 
   }
 
@@ -319,7 +297,7 @@ resource "aws_security_group" "control_center" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["10.0.4.0/24", "10.0.5.0/24"]
+    cidr_blocks = ["10.0.5.0/24"]
 
   }
 
@@ -328,7 +306,7 @@ resource "aws_security_group" "control_center" {
     from_port   = 9021
     to_port     = 9021
     protocol    = "tcp"
-    cidr_blocks = ["10.0.4.0/24", "10.0.5.0/24"]
+    cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24"]
 
   }
 
