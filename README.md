@@ -13,12 +13,9 @@ And hey... it is ~10 minutes of provisioning time -- instead of coding work.
 Quickstart
 ----------
 
-The following assumes you have Kafka  and an instance of
-the REST Proxy running using the default settings and some topics already created.
+The first thing you need to do is clone the repository. So go ahead and get yourself a copy of the Confluent Platform tools:
 
 ```bash
-    # Get a list of topics
-    $ curl "http://localhost:8082/topics"
+    $ git clone git@github.com:riferrei/ccloud-tools.git <ENTER>
       
-      ["__consumer_offsets","jsontest"]
 ```
