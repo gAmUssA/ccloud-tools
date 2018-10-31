@@ -21,7 +21,7 @@ resource "aws_subnet" "bastion_server" {
   vpc_id                  = "${aws_vpc.default.id}"
   cidr_block              = "10.0.6.0/24"
   map_public_ip_on_launch = true
-  availability_zone = "${element(var.aws_azs, 0)}"
+  availability_zone = "${element(var.aws_availability_zones, 0)}"
 
     tags {
 

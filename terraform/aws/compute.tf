@@ -130,8 +130,6 @@ resource "aws_instance" "control_center" {
 
 resource "aws_alb_target_group" "rest_proxy_target_group" {
 
-  depends_on = ["aws_alb.rest_proxy"]
-
   name = "rest-proxy-target-group"  
   port = "8082"
   protocol = "HTTP"
@@ -153,7 +151,7 @@ resource "aws_alb_target_group" "rest_proxy_target_group" {
 resource "aws_alb_target_group_attachment" "rest_proxy_attachment" {
 
   count = "${var.instance_count["rest_proxy"]}"
-  
+
   target_group_arn = "${aws_alb_target_group.rest_proxy_target_group.arn}"
   target_id = "${element(aws_instance.rest_proxy.*.id, count.index)}"
   port = 8082
@@ -198,8 +196,6 @@ resource "aws_alb_listener" "rest_proxy_listener" {
 
 resource "aws_alb_target_group" "control_center_target_group" {
 
-  depends_on = ["aws_alb.control_center"]
-
   name = "control-center-target-group"  
   port = "9021"
   protocol = "HTTP"
@@ -221,7 +217,7 @@ resource "aws_alb_target_group" "control_center_target_group" {
 resource "aws_alb_target_group_attachment" "control_center_attachment" {
 
   count = "${var.instance_count["control_center"]}"
-  
+
   target_group_arn = "${aws_alb_target_group.control_center_target_group.arn}"
   target_id = "${element(aws_instance.control_center.*.id, count.index)}"
   port = 9021

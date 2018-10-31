@@ -25,11 +25,94 @@ resource "aws_internet_gateway" "default" {
 
 }
 
+resource "aws_eip" "default" {
+
+  depends_on = ["aws_internet_gateway.default"]
+  vpc = true
+
+    tags {
+
+        Name = "ccloud-tools"
+
+    }
+
+}
+
+resource "aws_nat_gateway" "default" {
+
+    depends_on = ["aws_internet_gateway.default"]
+
+    allocation_id = "${aws_eip.default.id}"
+    subnet_id = "${aws_subnet.public_subnet_1.id}"
+
+    tags {
+
+        Name = "ccloud-tools"
+
+    }
+
+}
+
 resource "aws_route" "default" {
 
   route_table_id         = "${aws_vpc.default.main_route_table_id}"
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = "${aws_internet_gateway.default.id}"
+
+}
+
+resource "aws_route_table" "private_route_table" {
+
+  vpc_id = "${aws_vpc.default.id}"
+
+  tags {
+
+    Name = "private-route-table"
+
+  }
+
+}
+
+resource "aws_route" "private_route_2_internet" {
+
+  route_table_id = "${aws_route_table.private_route_table.id}"
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id = "${aws_nat_gateway.default.id}"
+
+}
+
+resource "aws_route_table_association" "public_subnet_1_association" {
+
+    subnet_id = "${aws_subnet.public_subnet_1.id}"
+    route_table_id = "${aws_vpc.default.main_route_table_id}"
+
+}
+
+resource "aws_route_table_association" "public_subnet_2_association" {
+
+    subnet_id = "${aws_subnet.public_subnet_2.id}"
+    route_table_id = "${aws_vpc.default.main_route_table_id}"
+
+}
+
+resource "aws_route_table_association" "private_subnet_1_association" {
+
+    subnet_id = "${aws_subnet.private_subnet_1.id}"
+    route_table_id = "${aws_route_table.private_route_table.id}"
+
+}
+
+resource "aws_route_table_association" "private_subnet_2_association" {
+
+    subnet_id = "${aws_subnet.private_subnet_2.id}"
+    route_table_id = "${aws_route_table.private_route_table.id}"
+
+}
+
+resource "aws_route_table_association" "private_subnet_3_association" {
+
+    subnet_id = "${aws_subnet.private_subnet_3.id}"
+    route_table_id = "${aws_route_table.private_route_table.id}"
 
 }
 
@@ -54,7 +137,7 @@ resource "aws_subnet" "private_subnet_1" {
 
   vpc_id = "${aws_vpc.default.id}"
   cidr_block = "10.0.1.0/24"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   availability_zone = "${element(var.aws_availability_zones, 0)}"
 
     tags {
@@ -69,7 +152,7 @@ resource "aws_subnet" "private_subnet_2" {
 
   vpc_id = "${aws_vpc.default.id}"
   cidr_block = "10.0.2.0/24"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   availability_zone = "${element(var.aws_availability_zones, 1)}"
 
     tags {
@@ -84,7 +167,7 @@ resource "aws_subnet" "private_subnet_3" {
 
   vpc_id = "${aws_vpc.default.id}"
   cidr_block = "10.0.3.0/24"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   availability_zone = "${element(var.aws_availability_zones, 2)}"
 
     tags {
