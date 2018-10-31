@@ -12,9 +12,9 @@ variable "instance_count" {
 
   default = {
 
-    "schema_registry"   = 1
-    "rest_proxy"        = 1
-    "control_center"    = 1
+    "schema_registry"  =  1
+    "rest_proxy"       =  1
+    "control_center"   =  1
 
   }
 
