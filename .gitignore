@@ -1,0 +1,3 @@
+terraform/aws/terraform.tfstate
+terraform/aws/terraform.tfstate.backup
+terraform/aws/.terraform
