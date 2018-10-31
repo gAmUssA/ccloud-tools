@@ -1,5 +1,5 @@
 ###########################################
-####### Schema Registry Bootstrap #########
+######## Schema Registry Bootstrap ########
 ###########################################
 
 data "template_file" "schema_registry_properties" {
