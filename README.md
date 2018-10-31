@@ -17,6 +17,11 @@ The first thing you need to do is clone the repository. So go ahead and get your
 
 ```bash
     $ git clone git@github.com:riferrei/ccloud-tools.git <ENTER>
-      
 ```
 Navigate to the folder that contains your Cloud provider implementation (i.e.: terraform/aws) and edit the 'main.tf' file. You neeed to provide the credentials from your Cloud provider, as well as the connectivity information from Confluent Cloud.
+
+<p align="center">
+    <img src="images/credentials.png" />
+</p>
+
+AAA
