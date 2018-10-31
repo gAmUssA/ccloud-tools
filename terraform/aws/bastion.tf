@@ -4,7 +4,6 @@
 ################################################################################
 
 /*
-
 data "template_file" "bastion_server_bootstrap" {
 
   template = <<EOT
@@ -101,5 +100,4 @@ output "bastion_server_private_key" {
   value = "${tls_private_key.key_pair.private_key_pem}"
 
 }
-
 */
