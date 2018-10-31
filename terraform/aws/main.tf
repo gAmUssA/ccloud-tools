@@ -4,8 +4,8 @@
 
 provider "aws" {
 
-    access_key = "<YOUR_AWS_ACCESS_KEY>"
-    secret_key = "<YOUR_AWS_SECRET_KEY>"
+    access_key = "AKIAICYJKFLJVKE3CNBA"
+    secret_key = "uYVA1sgEPlSBRuExMjaugMxZCWUOaOLTgpmHS1Yo"
     region = "us-east-1"
   
 }
@@ -16,18 +16,18 @@ provider "aws" {
 
 variable "ccloud_bootstrap_servers" {
 
-  default = "<CONFLUENT_CLOUD_BOOTSTRAP_SERVERS>"
+  default = "pkc-lo09l.us-east-1.aws.confluent.cloud:9092"
 
 }
 
 variable "ccloud_access_key" {
 
-  default = "<YOUR_CONFLUENT_CLOUD_ACCESS_KEY>"
+  default = "A5VL5LGKOT7T657J"
 
 }
 
 variable "ccloud_secret_key" {
 
-  default = "YOUR_CONFLUENT_CLOUD_SECRET_KEY"
+  default = "Ud++jKkBnm6mWuAzNJVlVPMXqwlM7PkFOKeFyD96IamPkOE8w8ENKiH3kPaQgNAa"
 
 }
