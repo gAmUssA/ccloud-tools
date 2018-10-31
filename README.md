@@ -24,7 +24,7 @@ Navigate to the folder that contains your Cloud provider implementation (i.e.: t
     <img src="images/credentials.png" />
 </p>
 
-The information from Confluent Cloud can be easily obtained via the dashboard. Go to your cluster and then -- access the Client Config tab. There, you can create new API keys and secret, as well as retrieve your cluster bootstrap servers. If you are new to Confluent Cloud, you might want to watch the following video:
+The information from Confluent Cloud can be easily obtained via the dashboard. Go to your cluster and then access the Client Config tab. There, you can create new API keys and secret, as well as retrieve your cluster bootstrap servers. If you are new to Confluent Cloud -- you might want to watch the following video:
 
 
 
