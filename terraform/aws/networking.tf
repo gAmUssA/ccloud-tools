@@ -55,9 +55,9 @@ resource "aws_nat_gateway" "default" {
 
 resource "aws_route" "default" {
 
-  route_table_id         = "${aws_vpc.default.main_route_table_id}"
+  route_table_id = "${aws_vpc.default.main_route_table_id}"
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.default.id}"
+  gateway_id = "${aws_internet_gateway.default.id}"
 
 }
 
@@ -158,8 +158,8 @@ resource "aws_subnet" "private_subnet_2" {
 
 resource "aws_subnet" "public_subnet_1" {
 
-  vpc_id                  = "${aws_vpc.default.id}"
-  cidr_block              = "10.0.3.0/24"
+  vpc_id = "${aws_vpc.default.id}"
+  cidr_block = "10.0.3.0/24"
   map_public_ip_on_launch = true
   availability_zone = "${element(var.aws_availability_zones, 0)}"
 
@@ -173,8 +173,8 @@ resource "aws_subnet" "public_subnet_1" {
 
 resource "aws_subnet" "public_subnet_2" {
 
-  vpc_id                  = "${aws_vpc.default.id}"
-  cidr_block              = "10.0.4.0/24"
+  vpc_id = "${aws_vpc.default.id}"
+  cidr_block = "10.0.4.0/24"
   map_public_ip_on_launch = true
   availability_zone = "${element(var.aws_availability_zones, 1)}"
 
@@ -192,9 +192,9 @@ resource "aws_subnet" "public_subnet_2" {
 
 resource "aws_security_group" "load_balancer" {
 
-  name        = "load-balancer"
+  name = "load-balancer"
   description = "Load Balancer"
-  vpc_id      = "${aws_vpc.default.id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
 
@@ -218,9 +218,9 @@ resource "aws_security_group" "load_balancer" {
 
 resource "aws_security_group" "schema_registry" {
 
-  name        = "schema-registry"
+  name = "schema-registry"
   description = "Schema Registry"
-  vpc_id      = "${aws_vpc.default.id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
 
@@ -253,9 +253,9 @@ resource "aws_security_group" "schema_registry" {
 
 resource "aws_security_group" "rest_proxy" {
 
-  name        = "rest-proxy"
+  name = "rest-proxy"
   description = "REST Proxy"
-  vpc_id      = "${aws_vpc.default.id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
 
@@ -288,9 +288,9 @@ resource "aws_security_group" "rest_proxy" {
 
 resource "aws_security_group" "control_center" {
 
-  name        = "control-center"
+  name = "control-center"
   description = "Control Center"
-  vpc_id      = "${aws_vpc.default.id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   ingress {
 
