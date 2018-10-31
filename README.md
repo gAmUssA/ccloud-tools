@@ -8,4 +8,4 @@ The Confluent Cloud Tools is an open-source project based on [Terraform](https:/
     <img src="images/3_steps.png" />
 </p>
 
-And hey... it is ~10 minutes of Cloud provisioning time instead of hard work.
+And hey... it is ~10 minutes of provisioning time -- instead of hard work. Go treat yourself =)
