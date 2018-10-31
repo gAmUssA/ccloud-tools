@@ -4,6 +4,6 @@
 
 The Confluent Cloud Tools is an open-source project based on [Terraform](https://www.terraform.io) that allows you to get all the tools from Confluent Platform (Schema Registry, REST Proxy, Control Center, KSQL) up-and-running in ~10 minutes. All you have to do is:
 
-![alt text](images/three_steps.png) 
+![alt text](images/3_steps.png)
 
 And hey... it is ~10 minutes of Cloud provisioning time instead of hard work.
