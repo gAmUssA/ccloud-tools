@@ -8,4 +8,17 @@ The Confluent Cloud Tools is an open-source project based on [Terraform](https:/
     <img src="images/3_steps.png" />
 </p>
 
-And hey... it is ~10 minutes of provisioning time -- instead of hard work. Go treat yourself =)
+And hey... it is ~10 minutes of provisioning time -- instead of coding work.
+
+Quickstart
+----------
+
+The following assumes you have Kafka  and an instance of
+the REST Proxy running using the default settings and some topics already created.
+
+```bash
+    # Get a list of topics
+    $ curl "http://localhost:8082/topics"
+      
+      ["__consumer_offsets","jsontest"]
+```
