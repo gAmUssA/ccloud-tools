@@ -26,13 +26,16 @@ Navigate to the folder that contains your Cloud provider implementation (i.e.: t
 
 The information from Confluent Cloud can be easily obtained via the dashboard. Go to your cluster and then access the Client Config tab. There, you can create new API keys and secret, as well as retrieve your cluster bootstrap servers. If you are new to Confluent Cloud -- you might want to watch the [Getting Started with Confluent Cloud Professional](https://www.youtube.com/watch?v=JTPjfk51s3c) video.
 
-Finally, you will need to run Terraform. While under the folder that contains your Cloud provider implementation (i.e.: terraform/aws) simply run:
+Finally, you will need to run Terraform. While under the folder that contains your Cloud provider implementation, run:
 
 ```bash
     $ terraform init <ENTER>
     $ terraform plan <ENTER>
     $ terraform apply <ENTER>
 ```
+You might need to run 'terraform apply' twice to get things working propertly. The first run will create the network subnets that will be used by the compute instances -- whereas the second run will effectly create them. Once the script finishes, there will be an output showing this:
+
+AAA
 
 License
 -------
