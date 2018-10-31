@@ -132,7 +132,7 @@ resource "aws_alb_target_group" "rest_proxy_target_group" {
   name = "rest-proxy-target-group"  
   port = "8082"
   protocol = "HTTP"
-  vpc_id   = "${aws_vpc.default.id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   health_check {    
 
@@ -177,8 +177,8 @@ resource "aws_alb" "rest_proxy" {
 resource "aws_alb_listener" "rest_proxy_listener" {
 
   load_balancer_arn = "${aws_alb.rest_proxy.arn}"  
-  protocol          = "HTTP"
-  port              = "80"
+  protocol = "HTTP"
+  port = "80"
   
   default_action {
 
@@ -198,7 +198,7 @@ resource "aws_alb_target_group" "control_center_target_group" {
   name = "control-center-target-group"  
   port = "9021"
   protocol = "HTTP"
-  vpc_id   = "${aws_vpc.default.id}"
+  vpc_id = "${aws_vpc.default.id}"
 
   health_check {    
 
@@ -243,13 +243,13 @@ resource "aws_alb" "control_center" {
 resource "aws_alb_listener" "control_center_listener" {
 
   load_balancer_arn = "${aws_alb.control_center.arn}"  
-  protocol          = "HTTP"
-  port              = "80"
+  protocol = "HTTP"
+  port = "80"
   
   default_action {
 
     target_group_arn = "${aws_alb_target_group.control_center_target_group.arn}"
-    type             = "forward"
+    type = "forward"
 
   }
 
