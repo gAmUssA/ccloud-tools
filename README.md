@@ -13,9 +13,10 @@ And hey... it is ~10 minutes of provisioning time -- instead of coding work.
 Quickstart
 ----------
 
-The first thing you need to do is clone the repository. So go ahead and get yourself a copy of the Confluent Platform tools:
+The first thing you need to do is clone the repository. So go ahead and get yourself a copy of the Confluent Cloud Tools:
 
 ```bash
     $ git clone git@github.com:riferrei/ccloud-tools.git <ENTER>
       
 ```
+Navigate to the folder that contains your Cloud provider implementation (i.e.: terraform/aws) and edit the 'main.tf' file. You neeed to provide the credentials from your Cloud provider, as well as the connectivity information from Confluent Cloud.
