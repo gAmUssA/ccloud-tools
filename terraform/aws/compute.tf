@@ -27,7 +27,8 @@ resource "aws_key_pair" "generated_key" {
 resource "aws_instance" "schema_registry" {
 
   depends_on = ["aws_subnet.private_subnet_1",
-                "aws_subnet.private_subnet_2"]
+                "aws_subnet.private_subnet_2",
+                "aws_nat_gateway.default"]
 
   count = "${var.instance_count["schema_registry"]}"
   ami = "ami-0922553b7b0369273"
@@ -124,6 +125,72 @@ resource "aws_instance" "control_center" {
 }
 
 ###########################################
+########## Schema Registry LBR ############
+###########################################
+
+resource "aws_alb_target_group" "schema_registry_target_group" {
+
+  name = "schema-registry-target-group"  
+  port = "8081"
+  protocol = "HTTP"
+  vpc_id = "${aws_vpc.default.id}"
+
+  health_check {    
+
+    healthy_threshold = 3    
+    unhealthy_threshold = 3    
+    timeout = 3   
+    interval = 5    
+    path = "/"
+    port = "8081"
+
+  }
+
+}
+
+resource "aws_alb_target_group_attachment" "schema_registry_attachment" {
+
+  count = "${var.instance_count["schema_registry"]}"
+
+  target_group_arn = "${aws_alb_target_group.schema_registry_target_group.arn}"
+  target_id = "${element(aws_instance.schema_registry.*.id, count.index)}"
+  port = 8081
+
+}
+
+resource "aws_alb" "schema_registry" {
+
+  depends_on = ["aws_instance.schema_registry"]
+
+  name = "schema-registry"
+  subnets = ["${aws_subnet.public_subnet_1.id}", "${aws_subnet.public_subnet_2.id}"]
+  security_groups = ["${aws_security_group.load_balancer.id}"]
+  internal = false
+
+  tags {
+
+    Name = "schema-registry"
+
+  }
+
+}
+
+resource "aws_alb_listener" "schema_registry_listener" {
+
+  load_balancer_arn = "${aws_alb.schema_registry.arn}"
+  protocol = "HTTP"
+  port = "80"
+  
+  default_action {
+
+    target_group_arn = "${aws_alb_target_group.schema_registry_target_group.arn}"
+    type = "forward"
+
+  }
+
+}
+
+###########################################
 ############# REST Proxy LBR ##############
 ###########################################
 
@@ -183,7 +250,7 @@ resource "aws_alb_listener" "rest_proxy_listener" {
   default_action {
 
     target_group_arn = "${aws_alb_target_group.rest_proxy_target_group.arn}"
-    type             = "forward"
+    type = "forward"
 
   }
 
