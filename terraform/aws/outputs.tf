@@ -14,6 +14,12 @@ output "rest_proxy_endpoint" {
 
 }
 
+output "kafka_connect_endpoint" {
+
+  value = "http://${aws_alb.kafka_connect.dns_name}"
+
+}
+
 output "ksql_server_endpoint" {
 
   value = "http://${aws_alb.ksql_server.dns_name}"

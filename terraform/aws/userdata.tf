@@ -64,6 +64,40 @@ data "template_file" "rest_proxy_bootstrap" {
 }
 
 ###########################################
+######## Kafka Connect Bootstrap ##########
+###########################################
+
+data "template_file" "kafka_connect_properties" {
+
+  template = "${file("bootstrap/kafka-connect.properties")}"
+
+  vars {
+
+    bootstrap_servers = "${var.ccloud_bootstrap_servers}"
+    access_key = "${var.ccloud_access_key}"
+    secret_key = "${var.ccloud_secret_key}"
+
+    schema_registry_url = "${join(",", formatlist("http://%s:%s",
+      aws_instance.schema_registry.*.private_ip, "8081"))}"
+
+  }
+
+}
+
+data "template_file" "kafka_connect_bootstrap" {
+
+  template = "${file("bootstrap/kafka-connect.sh")}"
+
+  vars {
+
+    confluent_platform_location = "${var.confluent_platform_location}"
+    kafka_connect_properties = "${data.template_file.kafka_connect_properties.rendered}"
+
+  }
+
+}
+
+###########################################
 ######### KSQL Server Bootstrap ###########
 ###########################################
 
@@ -113,6 +147,9 @@ data "template_file" "control_center_properties" {
 
     schema_registry_url = "${join(",", formatlist("http://%s:%s",
       aws_instance.schema_registry.*.private_ip, "8081"))}"
+
+    kafka_connect_url = "${join(",", formatlist("http://%s:%s",
+      aws_instance.kafka_connect.*.private_ip, "8083"))}"
 
     ksql_server_url = "${join(",", formatlist("http://%s:%s",
       aws_instance.ksql_server.*.private_ip, "8088"))}"

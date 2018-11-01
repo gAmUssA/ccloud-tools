@@ -35,7 +35,7 @@ Finally, you will need to run Terraform. While under the folder that contains yo
 ```
 Once the script finishes, there will be an output showing this:
 
-<img src="images/outputs.png" />
+<img src="images/output.png" />
 
 License
 -------

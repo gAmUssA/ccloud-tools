@@ -12,14 +12,14 @@ wget ${confluent_platform_location}
 unzip confluent-5.0.0-2.11.zip
 mkdir /etc/confluent
 mv confluent-5.0.0 /etc/confluent
-mkdir /etc/confluent/confluent-5.0.0/data
+mkdir /etc/confluent/confluent-5.0.0/etc/kafka-connect
 
 ########### Generating Props File ###########
 
-cd /etc/confluent/confluent-5.0.0/etc/confluent-control-center
+cd /etc/confluent/confluent-5.0.0/etc/kafka-connect
 
-cat > c3-ccloud.properties <<- "EOF"
-${control_center_properties}
+cat > kafka-connect-ccloud.properties <<- "EOF"
+${kafka_connect_properties}
 EOF
 
 ############# Change Ownership ##############
@@ -30,17 +30,16 @@ chown -R ec2-user:ec2-user /etc/confluent
 
 cd /lib/systemd/system
 
-cat > control-center.service <<- "EOF"
+cat > kafka-connect.service <<- "EOF"
 [Unit]
-Description=Confluent Control Center
+Description=Kafka Connect
 
 [Service]
 Type=simple
 Restart=always
 RestartSec=1
 User=ec2-user
-ExecStart=/etc/confluent/confluent-5.0.0/bin/control-center-start /etc/confluent/confluent-5.0.0/etc/confluent-control-center/c3-ccloud.properties
-ExecStop=/etc/confluent/confluent-5.0.0/bin/control-center-stop /etc/confluent/confluent-5.0.0/etc/confluent-control-center/c3-ccloud.properties
+ExecStart=/etc/confluent/confluent-5.0.0/bin/connect-distributed /etc/confluent/confluent-5.0.0/etc/kafka-connect/kafka-connect-ccloud.properties
 
 [Install]
 WantedBy=multi-user.target
@@ -48,5 +47,5 @@ EOF
 
 ########### Enable and Start ###########
 
-systemctl enable control-center
-systemctl start control-center
+systemctl enable kafka-connect
+systemctl start kafka-connect

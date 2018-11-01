@@ -50,7 +50,7 @@ resource "aws_instance" "schema_registry" {
 
   tags {
 
-    Name = "schema-registry"
+    Name = "schema-registry-${count.index}"
 
   }
 
@@ -84,7 +84,41 @@ resource "aws_instance" "rest_proxy" {
 
   tags {
 
-    Name = "rest-proxy"
+    Name = "rest-proxy-${count.index}"
+
+  }
+
+}
+
+###########################################
+############# Kafka Connect ###############
+###########################################
+
+resource "aws_instance" "kafka_connect" {
+
+  depends_on = ["aws_instance.schema_registry"]
+
+  count = "${var.instance_count["kafka_connect"]}"
+  ami = "ami-0922553b7b0369273"
+  instance_type = "t3.medium"
+  key_name = "${aws_key_pair.generated_key.key_name}"
+
+  subnet_id = "${element(data.aws_subnet_ids.private.ids, count.index)}"
+  vpc_security_group_ids = ["${aws_security_group.kafka_connect.id}"]
+  
+  user_data = "${data.template_file.kafka_connect_bootstrap.rendered}"
+
+  ebs_block_device {
+
+    device_name = "/dev/xvdb"
+    volume_type = "gp2"
+    volume_size = 100
+
+  }
+
+  tags {
+
+    Name = "kafka-connect-${count.index}"
 
   }
 
@@ -118,7 +152,7 @@ resource "aws_instance" "ksql_server" {
 
   tags {
 
-    Name = "ksql-server"
+    Name = "ksql-server-${count.index}"
 
   }
 
@@ -152,7 +186,7 @@ resource "aws_instance" "control_center" {
 
   tags {
 
-    Name = "control-center"
+    Name = "control-center-${count.index}"
 
   }
 
@@ -284,6 +318,72 @@ resource "aws_alb_listener" "rest_proxy_listener" {
   default_action {
 
     target_group_arn = "${aws_alb_target_group.rest_proxy_target_group.arn}"
+    type = "forward"
+
+  }
+
+}
+
+###########################################
+########### Kafka Connect LBR #############
+###########################################
+
+resource "aws_alb_target_group" "kafka_connect_target_group" {
+
+  name = "kafka-connect-target-group"
+  port = "8083"
+  protocol = "HTTP"
+  vpc_id = "${aws_vpc.default.id}"
+
+  health_check {    
+
+    healthy_threshold = 3    
+    unhealthy_threshold = 3    
+    timeout = 3   
+    interval = 5    
+    path = "/"
+    port = "8083"
+
+  }
+
+}
+
+resource "aws_alb_target_group_attachment" "kafka_connect_attachment" {
+
+  count = "${var.instance_count["kafka_connect"]}"
+
+  target_group_arn = "${aws_alb_target_group.kafka_connect_target_group.arn}"
+  target_id = "${element(aws_instance.kafka_connect.*.id, count.index)}"
+  port = 8083
+
+}
+
+resource "aws_alb" "kafka_connect" {
+
+  depends_on = ["aws_instance.kafka_connect"]
+
+  name = "kafka-connect"
+  subnets = ["${aws_subnet.public_subnet_1.id}", "${aws_subnet.public_subnet_2.id}"]
+  security_groups = ["${aws_security_group.load_balancer.id}"]
+  internal = false
+
+  tags {
+
+    Name = "kafka-connect"
+
+  }
+
+}
+
+resource "aws_alb_listener" "kafka_connect_listener" {
+
+  load_balancer_arn = "${aws_alb.kafka_connect.arn}"  
+  protocol = "HTTP"
+  port = "80"
+  
+  default_action {
+
+    target_group_arn = "${aws_alb_target_group.kafka_connect_target_group.arn}"
     type = "forward"
 
   }

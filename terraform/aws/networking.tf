@@ -294,6 +294,45 @@ resource "aws_security_group" "rest_proxy" {
   
 }
 
+resource "aws_security_group" "kafka_connect" {
+
+  name = "kafka-connect"
+  description = "Kafka Connect"
+  vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.5.0/24"]
+
+  }
+
+  ingress {
+
+    from_port   = 8083
+    to_port     = 8083
+    protocol    = "tcp"
+
+    cidr_blocks = ["10.0.1.0/24",
+                   "10.0.2.0/24",
+                   "10.0.3.0/24",
+                   "10.0.4.0/24"]
+
+  }
+
+  egress {
+
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    
+  }  
+  
+}
+
 resource "aws_security_group" "ksql_server" {
 
   name = "ksql-server"
