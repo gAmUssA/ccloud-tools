@@ -69,7 +69,7 @@ resource "aws_instance" "bastion_server" {
   instance_type = "t2.micro"
   key_name = "${aws_key_pair.generated_key.key_name}"
 
-  subnet_id = "${aws_subnet.public_subnet_1.id}"
+  subnet_id = "${aws_subnet.bastion_server.id}"
   vpc_security_group_ids = ["${aws_security_group.bastion_server.id}"]
 
   user_data = "${data.template_file.bastion_server_bootstrap.rendered}"
