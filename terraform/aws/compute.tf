@@ -44,7 +44,7 @@ resource "aws_instance" "schema_registry" {
 
     device_name = "/dev/xvdb"
     volume_type = "gp2"
-    volume_size = 10
+    volume_size = 100
 
   }
 
@@ -78,13 +78,47 @@ resource "aws_instance" "rest_proxy" {
 
     device_name = "/dev/xvdb"
     volume_type = "gp2"
-    volume_size = 10
+    volume_size = 100
 
   }
 
   tags {
 
     Name = "rest-proxy"
+
+  }
+
+}
+
+###########################################
+############## KSQL Server ################
+###########################################
+
+resource "aws_instance" "ksql_server" {
+
+  depends_on = ["aws_instance.schema_registry"]
+
+  count = "${var.instance_count["ksql_server"]}"
+  ami = "ami-0922553b7b0369273"
+  instance_type = "t3.2xlarge"
+  key_name = "${aws_key_pair.generated_key.key_name}"
+
+  subnet_id = "${element(data.aws_subnet_ids.private.ids, count.index)}"
+  vpc_security_group_ids = ["${aws_security_group.ksql_server.id}"]
+  
+  user_data = "${data.template_file.ksql_server_bootstrap.rendered}"
+
+  ebs_block_device {
+
+    device_name = "/dev/xvdb"
+    volume_type = "gp2"
+    volume_size = 300
+
+  }
+
+  tags {
+
+    Name = "ksql-server"
 
   }
 
@@ -250,6 +284,72 @@ resource "aws_alb_listener" "rest_proxy_listener" {
   default_action {
 
     target_group_arn = "${aws_alb_target_group.rest_proxy_target_group.arn}"
+    type = "forward"
+
+  }
+
+}
+
+###########################################
+############# KSQL Server LBR #############
+###########################################
+
+resource "aws_alb_target_group" "ksql_server_target_group" {
+
+  name = "ksql-server-target-group"  
+  port = "8088"
+  protocol = "HTTP"
+  vpc_id = "${aws_vpc.default.id}"
+
+  health_check {    
+
+    healthy_threshold = 3    
+    unhealthy_threshold = 3    
+    timeout = 3   
+    interval = 5    
+    path = "/info"
+    port = "8088"
+
+  }
+
+}
+
+resource "aws_alb_target_group_attachment" "ksql_server_attachment" {
+
+  count = "${var.instance_count["ksql_server"]}"
+
+  target_group_arn = "${aws_alb_target_group.ksql_server_target_group.arn}"
+  target_id = "${element(aws_instance.ksql_server.*.id, count.index)}"
+  port = 8088
+
+}
+
+resource "aws_alb" "ksql_server" {
+
+  depends_on = ["aws_instance.ksql_server"]
+
+  name = "ksql-server"
+  subnets = ["${aws_subnet.public_subnet_1.id}", "${aws_subnet.public_subnet_2.id}"]
+  security_groups = ["${aws_security_group.load_balancer.id}"]
+  internal = false
+
+  tags {
+
+    Name = "ksql-server"
+
+  }
+
+}
+
+resource "aws_alb_listener" "ksql_server_listener" {
+
+  load_balancer_arn = "${aws_alb.ksql_server.arn}"
+  protocol = "HTTP"
+  port = "80"
+  
+  default_action {
+
+    target_group_arn = "${aws_alb_target_group.ksql_server_target_group.arn}"
     type = "forward"
 
   }

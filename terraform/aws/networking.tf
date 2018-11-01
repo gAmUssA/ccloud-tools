@@ -236,7 +236,11 @@ resource "aws_security_group" "schema_registry" {
     from_port   = 8081
     to_port     = 8081
     protocol    = "tcp"
-    cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24"]
+
+    cidr_blocks = ["10.0.1.0/24",
+                   "10.0.2.0/24",
+                   "10.0.3.0/24",
+                   "10.0.4.0/24"]
 
   }
 
@@ -271,7 +275,50 @@ resource "aws_security_group" "rest_proxy" {
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
-    cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24"]
+
+    cidr_blocks = ["10.0.1.0/24",
+                   "10.0.2.0/24",
+                   "10.0.3.0/24",
+                   "10.0.4.0/24"]
+
+  }
+
+  egress {
+
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    
+  }  
+  
+}
+
+resource "aws_security_group" "ksql_server" {
+
+  name = "ksql-server"
+  description = "KSQL Server"
+  vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.5.0/24"]
+
+  }
+
+  ingress {
+
+    from_port   = 8088
+    to_port     = 8088
+    protocol    = "tcp"
+
+    cidr_blocks = ["10.0.1.0/24",
+                   "10.0.2.0/24",
+                   "10.0.3.0/24",
+                   "10.0.4.0/24"]
 
   }
 
@@ -306,7 +353,11 @@ resource "aws_security_group" "control_center" {
     from_port   = 9021
     to_port     = 9021
     protocol    = "tcp"
-    cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24"]
+
+    cidr_blocks = ["10.0.1.0/24",
+                   "10.0.2.0/24",
+                   "10.0.3.0/24",
+                   "10.0.4.0/24"]
 
   }
 

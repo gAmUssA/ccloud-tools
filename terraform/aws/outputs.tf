@@ -14,6 +14,12 @@ output "rest_proxy_endpoint" {
 
 }
 
+output "ksql_server_endpoint" {
+
+  value = "http://${aws_alb.ksql_server.dns_name}"
+
+}
+
 output "control_center_endpoint" {
 
   value = "http://${aws_alb.control_center.dns_name}"

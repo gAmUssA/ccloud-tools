@@ -16,10 +16,10 @@ mkdir /etc/confluent/confluent-5.0.0/data
 
 ########### Generating Props File ###########
 
-cd /etc/confluent/confluent-5.0.0/etc/confluent-control-center
+cd /etc/confluent/confluent-5.0.0/etc/ksql
 
-cat > c3-ccloud.properties <<- "EOF"
-${control_center_properties}
+cat > ksql-server-ccloud.properties <<- "EOF"
+${ksql_server_properties}
 EOF
 
 ############# Change Ownership ##############
@@ -30,18 +30,18 @@ chown -R ec2-user:ec2-user /etc/confluent
 
 cd /lib/systemd/system
 
-cat > control-center.service <<- "EOF"
+cat > ksql-server.service <<- "EOF"
 [Unit]
-Description=Confluent Control Center
-After=ksql-server.service
+Description=Confluent KSQL Server
+After=network.target
 
 [Service]
 Type=simple
 Restart=always
 RestartSec=1
 User=ec2-user
-ExecStart=/etc/confluent/confluent-5.0.0/bin/control-center-start /etc/confluent/confluent-5.0.0/etc/confluent-control-center/c3-ccloud.properties
-ExecStop=/etc/confluent/confluent-5.0.0/bin/control-center-stop /etc/confluent/confluent-5.0.0/etc/confluent-control-center/c3-ccloud.properties
+ExecStart=/etc/confluent/confluent-5.0.0/bin/ksql-server-start /etc/confluent/confluent-5.0.0/etc/ksql/ksql-server-ccloud.properties
+ExecStop=/etc/confluent/confluent-5.0.0/bin/ksql-server-stop /etc/confluent/confluent-5.0.0/etc/ksql/ksql-server-ccloud.properties
 
 [Install]
 WantedBy=multi-user.target
@@ -49,5 +49,5 @@ EOF
 
 ########### Enable and Start ###########
 
-systemctl enable control-center
-systemctl start control-center
+systemctl enable ksql-server
+systemctl start ksql-server

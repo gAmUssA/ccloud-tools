@@ -64,7 +64,7 @@ data "template_file" "rest_proxy_bootstrap" {
 }
 
 ###########################################
-######## Control Center Bootstrap #########
+######### KSQL Server Bootstrap ###########
 ###########################################
 
 data "template_file" "ksql_server_properties" {
@@ -84,6 +84,23 @@ data "template_file" "ksql_server_properties" {
 
 }
 
+data "template_file" "ksql_server_bootstrap" {
+
+  template = "${file("bootstrap/ksql-server.sh")}"
+
+  vars {
+
+    confluent_platform_location = "${var.confluent_platform_location}"
+    ksql_server_properties = "${data.template_file.ksql_server_properties.rendered}"
+
+  }
+
+}
+
+###########################################
+######## Control Center Bootstrap #########
+###########################################
+
 data "template_file" "control_center_properties" {
 
   template = "${file("bootstrap/control-center.properties")}"
@@ -97,6 +114,9 @@ data "template_file" "control_center_properties" {
     schema_registry_url = "${join(",", formatlist("http://%s:%s",
       aws_instance.schema_registry.*.private_ip, "8081"))}"
 
+    ksql_server_url = "${join(",", formatlist("http://%s:%s",
+      aws_instance.ksql_server.*.private_ip, "8088"))}"
+
   }
 
 }
@@ -108,7 +128,6 @@ data "template_file" "control_center_bootstrap" {
   vars {
 
     confluent_platform_location = "${var.confluent_platform_location}"
-    ksql_server_properties = "${data.template_file.ksql_server_properties.rendered}"
     control_center_properties = "${data.template_file.control_center_properties.rendered}"
 
   }
