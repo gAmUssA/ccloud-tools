@@ -1,7 +1,7 @@
 terraform/aws/.terraform/**/*.*
-terraform/aws/terraform.tfstate
-terraform/aws/terraform.lock.info
+terraform/aws/terraform.tfstate.*
+terraform/aws/terraform.lock.*
 
 terraform/gcp/.terraform/**/*.*
-terraform/gcp/terraform.tfstate
-terraform/gcp/terraform.lock.info
+terraform/gcp/terraform.tfstate.*
+terraform/gcp/terraform.lock.*
