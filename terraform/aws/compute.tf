@@ -30,7 +30,9 @@ resource "aws_instance" "schema_registry" {
                 "aws_subnet.private_subnet_2",
                 "aws_nat_gateway.default"]
 
-  count = "${var.instance_count["schema_registry"]}"
+  count = "${var.instance_count["schema_registry"] >= 1
+           ? var.instance_count["schema_registry"] : 1}"
+
   ami = "ami-0922553b7b0369273"
   instance_type = "t3.medium"
   key_name = "${aws_key_pair.generated_key.key_name}"
@@ -218,7 +220,8 @@ resource "aws_alb_target_group" "schema_registry_target_group" {
 
 resource "aws_alb_target_group_attachment" "schema_registry_attachment" {
 
-  count = "${var.instance_count["schema_registry"]}"
+  count = "${var.instance_count["schema_registry"] >= 1
+           ? var.instance_count["schema_registry"] : 1}"
 
   target_group_arn = "${aws_alb_target_group.schema_registry_target_group.arn}"
   target_id = "${element(aws_instance.schema_registry.*.id, count.index)}"
@@ -264,6 +267,8 @@ resource "aws_alb_listener" "schema_registry_listener" {
 
 resource "aws_alb_target_group" "rest_proxy_target_group" {
 
+  count = "${var.instance_count["rest_proxy"] >= 1 ? 1 : 0}"
+
   name = "rest-proxy-target-group"  
   port = "8082"
   protocol = "HTTP"
@@ -284,7 +289,8 @@ resource "aws_alb_target_group" "rest_proxy_target_group" {
 
 resource "aws_alb_target_group_attachment" "rest_proxy_attachment" {
 
-  count = "${var.instance_count["rest_proxy"]}"
+  count = "${var.instance_count["rest_proxy"] >= 1
+           ? var.instance_count["rest_proxy"] : 0}"
 
   target_group_arn = "${aws_alb_target_group.rest_proxy_target_group.arn}"
   target_id = "${element(aws_instance.rest_proxy.*.id, count.index)}"
@@ -294,7 +300,7 @@ resource "aws_alb_target_group_attachment" "rest_proxy_attachment" {
 
 resource "aws_alb" "rest_proxy" {
 
-  depends_on = ["aws_instance.rest_proxy"]
+  count = "${var.instance_count["rest_proxy"] >= 1 ? 1 : 0}"
 
   name = "rest-proxy"
   subnets = ["${aws_subnet.public_subnet_1.id}", "${aws_subnet.public_subnet_2.id}"]
@@ -311,6 +317,8 @@ resource "aws_alb" "rest_proxy" {
 
 resource "aws_alb_listener" "rest_proxy_listener" {
 
+  count = "${var.instance_count["rest_proxy"] >= 1 ? 1 : 0}"
+  
   load_balancer_arn = "${aws_alb.rest_proxy.arn}"  
   protocol = "HTTP"
   port = "80"
@@ -329,6 +337,8 @@ resource "aws_alb_listener" "rest_proxy_listener" {
 ###########################################
 
 resource "aws_alb_target_group" "kafka_connect_target_group" {
+
+  count = "${var.instance_count["kafka_connect"] >= 1 ? 1 : 0}"
 
   name = "kafka-connect-target-group"
   port = "8083"
@@ -350,7 +360,8 @@ resource "aws_alb_target_group" "kafka_connect_target_group" {
 
 resource "aws_alb_target_group_attachment" "kafka_connect_attachment" {
 
-  count = "${var.instance_count["kafka_connect"]}"
+  count = "${var.instance_count["kafka_connect"] >= 1
+           ? var.instance_count["kafka_connect"] : 0}"
 
   target_group_arn = "${aws_alb_target_group.kafka_connect_target_group.arn}"
   target_id = "${element(aws_instance.kafka_connect.*.id, count.index)}"
@@ -360,7 +371,7 @@ resource "aws_alb_target_group_attachment" "kafka_connect_attachment" {
 
 resource "aws_alb" "kafka_connect" {
 
-  depends_on = ["aws_instance.kafka_connect"]
+  count = "${var.instance_count["kafka_connect"] >= 1 ? 1 : 0}"
 
   name = "kafka-connect"
   subnets = ["${aws_subnet.public_subnet_1.id}", "${aws_subnet.public_subnet_2.id}"]
@@ -377,6 +388,8 @@ resource "aws_alb" "kafka_connect" {
 
 resource "aws_alb_listener" "kafka_connect_listener" {
 
+  count = "${var.instance_count["kafka_connect"] >= 1 ? 1 : 0}"
+  
   load_balancer_arn = "${aws_alb.kafka_connect.arn}"  
   protocol = "HTTP"
   port = "80"
@@ -395,6 +408,8 @@ resource "aws_alb_listener" "kafka_connect_listener" {
 ###########################################
 
 resource "aws_alb_target_group" "ksql_server_target_group" {
+
+  count = "${var.instance_count["ksql_server"] >= 1 ? 1 : 0}"
 
   name = "ksql-server-target-group"  
   port = "8088"
@@ -416,7 +431,8 @@ resource "aws_alb_target_group" "ksql_server_target_group" {
 
 resource "aws_alb_target_group_attachment" "ksql_server_attachment" {
 
-  count = "${var.instance_count["ksql_server"]}"
+  count = "${var.instance_count["ksql_server"] >= 1
+           ? var.instance_count["ksql_server"] : 0}"
 
   target_group_arn = "${aws_alb_target_group.ksql_server_target_group.arn}"
   target_id = "${element(aws_instance.ksql_server.*.id, count.index)}"
@@ -426,7 +442,7 @@ resource "aws_alb_target_group_attachment" "ksql_server_attachment" {
 
 resource "aws_alb" "ksql_server" {
 
-  depends_on = ["aws_instance.ksql_server"]
+  count = "${var.instance_count["ksql_server"] >= 1 ? 1 : 0}"
 
   name = "ksql-server"
   subnets = ["${aws_subnet.public_subnet_1.id}", "${aws_subnet.public_subnet_2.id}"]
@@ -443,6 +459,8 @@ resource "aws_alb" "ksql_server" {
 
 resource "aws_alb_listener" "ksql_server_listener" {
 
+  count = "${var.instance_count["ksql_server"] >= 1 ? 1 : 0}"
+  
   load_balancer_arn = "${aws_alb.ksql_server.arn}"
   protocol = "HTTP"
   port = "80"
@@ -461,6 +479,8 @@ resource "aws_alb_listener" "ksql_server_listener" {
 ###########################################
 
 resource "aws_alb_target_group" "control_center_target_group" {
+
+  count = "${var.instance_count["control_center"] >= 1 ? 1 : 0}"
 
   name = "control-center-target-group"  
   port = "9021"
@@ -482,7 +502,8 @@ resource "aws_alb_target_group" "control_center_target_group" {
 
 resource "aws_alb_target_group_attachment" "control_center_attachment" {
 
-  count = "${var.instance_count["control_center"]}"
+  count = "${var.instance_count["control_center"] >= 1
+           ? var.instance_count["control_center"] : 0}"
 
   target_group_arn = "${aws_alb_target_group.control_center_target_group.arn}"
   target_id = "${element(aws_instance.control_center.*.id, count.index)}"
@@ -492,7 +513,7 @@ resource "aws_alb_target_group_attachment" "control_center_attachment" {
 
 resource "aws_alb" "control_center" {
 
-  depends_on = ["aws_instance.control_center"]
+  count = "${var.instance_count["control_center"] >= 1 ? 1 : 0}"
 
   name = "control-center"
   subnets = ["${aws_subnet.public_subnet_1.id}", "${aws_subnet.public_subnet_2.id}"]
@@ -509,6 +530,8 @@ resource "aws_alb" "control_center" {
 
 resource "aws_alb_listener" "control_center_listener" {
 
+  count = "${var.instance_count["control_center"] >= 1 ? 1 : 0}"
+  
   load_balancer_arn = "${aws_alb.control_center.arn}"  
   protocol = "HTTP"
   port = "80"
